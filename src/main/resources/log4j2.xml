@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration name="ConfigDeployerConsoleLoggingConfiguration" status="WARN" strict="true">
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d{ISO8601}] %m%n" />
+			<ThresholdFilter level="WARN" onMatch="DENY" onMismatch="NEUTRAL"/>
+		</Console>
+		<Console name="STDERR" target="SYSTEM_ERR">
+			<PatternLayout pattern="[%d{ISO8601}] [%p] %m %ex%n" />
+			<ThresholdFilter level="WARN" onMatch="NEUTRAL" onMismatch="DENY"/>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="INFO">
+			<AppenderRef ref="STDOUT" />
+			<AppenderRef ref="STDERR" />
+		</Root>
+	</Loggers>
+</Configuration>
