@@ -1,14 +1,14 @@
 ConfigDeployer Console Application
 ==================================
 
-ConfigDeployer Console is a Java application designed for the deployment of software configurations in different installation environments using XML format profiles. It is based on the equally named core framework *ConfigDeployer*.
+ConfigDeployer Console is a Java application designed for the deployment of software configurations in different installation environments using XML format profiles. It is based on the [ConfigDeployer Core Module](https://github.com/georgwittberger/configdeployer-core).
 
 Getting started
 ---------------
 
 ### Obtaining the source code
 
-Install *Git* on your computer, open the *Git Bash* and navigate to the directory where you want to check-out the repository. Then execute the following command:
+Install [Git](http://git-scm.com/downloads) on your computer, open the Git Bash and navigate to the directory where you want to check-out the repository. Then execute the following command:
 
     git clone https://github.com/georgwittberger/configdeployer-console.git
 
@@ -16,7 +16,7 @@ You will get a new sub-directory named `configdeployer-console` which contains t
 
 ### Building the binaries
 
-Install *Maven* on your computer, open a terminal and navigate to the directory where the ConfigDeployer project resides. Then execute the following command:
+Install [Maven](http://maven.apache.org/download.cgi) on your computer, open a terminal and navigate to the directory where the ConfigDeployer project resides. Then execute the following command:
 
     mvn install
 
@@ -34,7 +34,7 @@ The release ZIP is a ready-to-use package for distribution. It contains the foll
 Creating a profile
 ------------------
 
-Please refer to the *ConfigDeployer Core Module* documentation for more info on creating a profile.
+Please refer to the [ConfigDeployer Core Module](https://github.com/georgwittberger/configdeployer-core) documentation for more information.
 
 Deploying a profile
 -------------------
@@ -49,15 +49,14 @@ On Windows:
 
     configdeployer.cmd profile1.xml profile2.xml ... profileN.xml
 
-If your profile is compressed inside a GZip archive you may also pass this file to the application:
+If your profile is compressed inside a GZip archive you can also pass this file to the application:
 
-    ./configdeployer.sh profile1.gz
+    ./configdeployer.sh profile1.xml.gz
 
-The console application uses the `ProfileDeployer` class together with the `VariablesPreparer` to enable variable substitution in certain elements of the configuration profile. You can use the following variable patterns:
+The console application uses the default `ProfileDeployer` class together with the `FileInputStreamProvider` to load and deploy configuration profiles from the local file system. Additionally, the `VariablesPreparer` is plugged in to enable variable substitution in certain elements of the profile (location of properties files and connection settings of databases). Settings of the variables resolvers:
 
--   `${env:foo}` - Resolves to the value of the environment variable `foo`.
--   `${sys:bar}` - Resolves to the value of the Java system property `bar`.
+-   Environment variables can be accessed with the `env` prefix, e.g. `${env:foo}` resolves to the value of the environment variable `foo`.
+-   Java system properties can be accessed with the `sys` prefix, e.g. `${sys:user.home}` resolves to home directory of the user executing the program.
+-   Replacement is performed twice (depth = 2), i.e. you can have environment variables which contain another variable pattern in their value.
 
-Replacement is performed with a depth of 2 which allows you to have environment variables containing another variable pattern.
-
-Please refer to the *ConfigDeployer Core Module* documentation for more info on the deployment process.
+Please refer to the [ConfigDeployer Core Module](https://github.com/georgwittberger/configdeployer-core) documentation for more information.
