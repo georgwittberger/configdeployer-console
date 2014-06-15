@@ -132,6 +132,7 @@ public class ConfigDeployer
             {
                 ProfileDeployer profileDeployer = new ProfileDeployer(new ProfileProvider(inputStreamProvider),
                         profilePreparers);
+                profileDeployer.setFailFast(failFast);
                 success &= profileDeployer.deploy();
             }
             catch (Exception e)
