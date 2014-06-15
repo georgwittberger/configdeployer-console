@@ -39,24 +39,43 @@ Please refer to the [ConfigDeployer Core Module](https://github.com/georgwittber
 Deploying a profile
 -------------------
 
-Once you have unzipped the release ZIP archive to a directory of your choice you can deploy any configuration profile using this simple command line syntax:
+Once you have unzipped the release ZIP archive to a directory of your choice you can deploy any configuration profile using the following command line syntax:
 
-On Unix:
+    configdeployer [-ev [-vd <num>] [-vp <file>]] [-ff] profile [profile ...]
 
-    ./configdeployer.sh profile1.xml profile2.xml ... profileN.xml
+Most simple usage:
 
-On Windows:
+    configdeployer myprofile.xml
 
-    configdeployer.cmd profile1.xml profile2.xml ... profileN.xml
+Profiles must be provided as files in the local file system, either with uncompressed XML content or as compressed GZip archives. The application treats files with the extension `.gz` or `.gzip` as compressed profiles.
 
-If your profile is compressed inside a GZip archive you can also pass this file to the application:
+The basic functionality can be extended by using one or more of the following command line options:
 
-    ./configdeployer.sh profile1.xml.gz
+-   `-ev` or `--enable-variables` enables substitution of variables in certain elements of the configuration profile.
+    -   Variables are resolved in the `location` attribute of the `properties-file` element and the `driver-class`, `jdbc-url`, `username` and `password` attributes of the `database` element.
+    -   `${env:foobar}` will be resolved to the environment variable `foobar`.
+    -   `${sys:user.home}` will be resolved to the Java system property `user.home` (the current user's home directory)
+-   `-vd #` or `--variables-depth=#` sets the number of iterations for variable substitution to the given value (can only be used in conjunction with the `-ev` option). (Default = 1)
+-   `-vp file` or `--variables-properties=file` specifies a separate properties file containing variable values (can only be used in conjunction with the `-ev` option). The pattern `${p:foobar}` will be resolved to the value of the property `foobar` from the given file.
+-   `-ff` or `--fail-fast` forces the application to stop the deployment immediately once a failure occurs. Note that changes which have already been applied to resources are *not* rolled-back.
 
-The console application uses the default `ProfileDeployer` class together with the `FileInputStreamProvider` to load and deploy configuration profiles from the local file system. Additionally, the `VariablesPreparer` is plugged in to enable variable substitution in certain elements of the profile (location of properties files and connection settings of databases). Settings of the variables resolvers:
+*Important:* If your profile needs to update databases you must put the Java library containing the appropriate JDBC driver into the `lib` directory. See the manual of your database vendor for more information where to find this library.
 
--   Environment variables can be accessed with the `env` prefix, e.g. `${env:foo}` resolves to the value of the environment variable `foo`.
--   Java system properties can be accessed with the `sys` prefix, e.g. `${sys:user.home}` resolves to home directory of the user executing the program.
--   Replacement is performed twice (depth = 2), i.e. you can have environment variables which contain another variable pattern in their value.
+Other examples
+--------------
 
-Please refer to the [ConfigDeployer Core Module](https://github.com/georgwittberger/configdeployer-core) documentation for more information.
+Deploying a profile which contains variables:
+
+    configdeployer -ev myprofile.xml
+
+Deploying a profile with variables that should be resolved using an external properties file:
+
+    configdeployer -ev -vp values.properties myprofile.xml
+
+Deploying three profiles but abort deployment immediately if an error occurs:
+
+    configdeployer -ff one.xml two.xml three.xml
+
+Deploying a profile compressed in a GZip archive:
+
+    configdeployer myprofile.xml.gz
